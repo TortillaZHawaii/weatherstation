@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Weather Station</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    </script>
+</head>
+<body>
+    <h1>Weather Station</h1>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['15:31:20', '15:31:22', '15:31:24'],
+                datasets: [{
+                    label: 'Temperature',
+                    data: [21, 32, 21],
+                    borderColor: '#D21404',
+                    yAxisID: 'yTemp',
+                    cubicInterpolationMode: 'monotone',
+                    tension: 0.4
+                },
+                {
+                    label: 'Humidity',
+                    data: [43, 50, 52],
+                    borderColor: '#33CCCC',
+                    yAxisID: 'yHumidity',
+                    cubicInterpolationMode: 'monotone',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                scales: {
+                    yTemp: {
+                        display: true,
+                        suggestedMin: 0,
+                        suggestedMax: 50,
+                        title: {
+                            display: true,
+                            text: 'Temperature (°C)'
+                        }
+                    },
+                    yHumidity: {
+                        display: true,
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        title: {
+                            display: true,
+                            text: 'Humidity (%)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    <form method="post">
+        <div>
+            <label>Min temperature °C:</label>
+            <input type="number" name="mintemperature">
+        </div>
+        <div>
+            <label>Max temperature °C:</label>
+            <input type="number" name="maxtemperature">
+        </div>
+        <div>
+            <label>Min humidity %:</label>
+            <input type="number" name="minhumidity">
+        </div>
+        <div>
+            <label>Max humidity %:</label>
+            <input type="number" name="maxhumidity">
+        </div>
+        <button>Change safe boundries</button>
+    </form>
+    
+</body>
+</html>
