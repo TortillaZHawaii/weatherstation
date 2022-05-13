@@ -7,7 +7,7 @@ func main() {
 
 	go handleDht(mCache, channel)
 	go handleLeds(boundsCache, channel)
-	// go handleButton(&mCache)
+	go handleButton(mCache)
 
 	handleHttpServer(mCache, boundsCache)
 }
