@@ -2,9 +2,20 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 )
+
+type PageData struct {
+	MinTemperature int16
+	MaxTemperature int16
+	MinHumidity    int16
+	MaxHumidity    int16
+	Times          []string
+	Temperatures   []string
+	Humidities     []string
+}
 
 func handleHttpServer(mCache *measurementsCache, bCache *boundsCache) {
 	fmt.Println("SER: Httpserver starting...")
@@ -21,12 +32,57 @@ func handleHttpServer(mCache *measurementsCache, bCache *boundsCache) {
 
 func handleGet(w http.ResponseWriter, r *http.Request,
 	mCache *measurementsCache, bCache *boundsCache) {
-	http.ServeFile(w, r, "index.html")
+
+	data := generatePageData(mCache, bCache)
+
+	tmpl, err := template.ParseFiles("index.html")
+	if err != nil {
+		fmt.Fprintf(w, "Error: %s", err)
+		fmt.Println("SER: Error parsing index.html:", err)
+		return
+	}
+
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		fmt.Fprintf(w, "Error: %s", err)
+		fmt.Println("SER: Error executing template:", err)
+		return
+	}
+}
+
+func generatePageData(mCache *measurementsCache, bCache *boundsCache) PageData {
+	measurements := mCache.getArray()
+	times := []string{}
+	temperatures := []string{}
+	humidities := []string{}
+
+	for _, m := range measurements {
+		if m.err != nil {
+			continue
+		}
+
+		times = append(times, m.time.Format("15:04:05"))
+		temperatures = append(temperatures, fmt.Sprintf("%d", m.temperature))
+		humidities = append(humidities, fmt.Sprintf("%d", m.humidity))
+	}
+
+	boundries := bCache.get()
+
+	return PageData{
+		Times:          times,
+		Temperatures:   temperatures,
+		Humidities:     humidities,
+		MinTemperature: boundries.minTemperature,
+		MaxTemperature: boundries.maxTemperature,
+		MinHumidity:    boundries.minHumidity,
+		MaxHumidity:    boundries.maxHumidity,
+	}
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request,
 	mCache *measurementsCache, bCache *boundsCache) {
 	err := r.ParseForm()
+
 	if err != nil {
 		fmt.Fprintf(w, "Error: %s", err)
 		return

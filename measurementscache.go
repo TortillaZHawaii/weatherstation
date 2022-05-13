@@ -55,7 +55,7 @@ func (c *measurementsCache) getArray() []measurement {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	var list []measurement
-	for n := c.list.head; n != nil; n = n.next {
+	for n := c.list.tail; n != nil; n = n.prev {
 		list = append(list, n.data)
 	}
 	return list

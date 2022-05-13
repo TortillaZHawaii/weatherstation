@@ -14,10 +14,10 @@
         const myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['15:31:20', '15:31:22', '15:31:24'],
+                labels: [{{ range .Times }} {{ . }}, {{ end }}],
                 datasets: [{
                     label: 'Temperature',
-                    data: [21, 32, 21],
+                    data: [{{range .Temperatures}} {{.}}, {{end}}],
                     borderColor: '#D21404',
                     yAxisID: 'yTemp',
                     cubicInterpolationMode: 'monotone',
@@ -25,7 +25,7 @@
                 },
                 {
                     label: 'Humidity',
-                    data: [43, 50, 52],
+                    data: [{{range .Humidities}} {{.}}, {{end}}],
                     borderColor: '#33CCCC',
                     yAxisID: 'yHumidity',
                     cubicInterpolationMode: 'monotone',
@@ -59,19 +59,19 @@
     <form method="post">
         <div>
             <label>Min temperature °C:</label>
-            <input type="number" name="mintemperature">
+            <input type="number" name="mintemperature" value="{{.MinTemperature}}">
         </div>
         <div>
             <label>Max temperature °C:</label>
-            <input type="number" name="maxtemperature">
+            <input type="number" name="maxtemperature" value="{{.MaxTemperature}}">
         </div>
         <div>
             <label>Min humidity %:</label>
-            <input type="number" name="minhumidity">
+            <input type="number" name="minhumidity" value="{{.MinHumidity}}">
         </div>
         <div>
             <label>Max humidity %:</label>
-            <input type="number" name="maxhumidity">
+            <input type="number" name="maxhumidity" value="{{.MaxHumidity}}">
         </div>
         <button>Change safe boundries</button>
     </form>
