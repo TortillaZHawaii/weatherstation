@@ -3,10 +3,10 @@ package main
 import "sync"
 
 type bounds struct {
-	minTemperature int16
-	maxTemperature int16
-	minHumidity    int16
-	maxHumidity    int16
+	minTemperature int8
+	maxTemperature int8
+	minHumidity    int8
+	maxHumidity    int8
 }
 
 type boundsCache struct {

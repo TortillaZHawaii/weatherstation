@@ -8,10 +8,10 @@ import (
 )
 
 type PageData struct {
-	MinTemperature int16
-	MaxTemperature int16
-	MinHumidity    int16
-	MaxHumidity    int16
+	MinTemperature int8
+	MaxTemperature int8
+	MinHumidity    int8
+	MaxHumidity    int8
 	Times          []string
 	Temperatures   []string
 	Humidities     []string
@@ -97,25 +97,25 @@ func handlePost(w http.ResponseWriter, r *http.Request,
 		minTemperature, "-", maxTemperature, "C,",
 		minHumidity, "-", maxHumidity, "%")
 
-	minTemperatureInt, err := parseToInt16(minTemperature)
+	minTemperatureInt, err := parseToInt8(minTemperature)
 	if err != nil {
 		fmt.Println("SER: Error parsing minTemperature:", err)
 		fmt.Fprint(w, "Error parsing minTemperature:", err)
 		return
 	}
-	maxTemperatureInt, err := parseToInt16(maxTemperature)
+	maxTemperatureInt, err := parseToInt8(maxTemperature)
 	if err != nil {
 		fmt.Println("SER: Error parsing maxTemperature:", err)
 		fmt.Fprint(w, "Error parsing maxTemperature:", err)
 		return
 	}
-	minHumidityInt, err := parseToInt16(minHumidity)
+	minHumidityInt, err := parseToInt8(minHumidity)
 	if err != nil {
 		fmt.Println("SER: Error parsing minHumidity:", err)
 		fmt.Fprint(w, "Error parsing minHumidity:", err)
 		return
 	}
-	maxHumidityInt, err := parseToInt16(maxHumidity)
+	maxHumidityInt, err := parseToInt8(maxHumidity)
 	if err != nil {
 		fmt.Println("SER: Error parsing maxHumidity:", err)
 		fmt.Fprint(w, "Error parsing maxHumidity:", err)
@@ -132,10 +132,10 @@ func handlePost(w http.ResponseWriter, r *http.Request,
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func parseToInt16(s string) (int16, error) {
-	i, err := strconv.ParseInt(s, 10, 16)
+func parseToInt8(s string) (int8, error) {
+	i, err := strconv.ParseInt(s, 10, 8)
 	if err != nil {
 		return 0, err
 	}
-	return int16(i), nil
+	return int8(i), nil
 }

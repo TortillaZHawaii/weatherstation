@@ -6,8 +6,8 @@ import (
 )
 
 type measurement struct {
-	temperature int16
-	humidity    int16
+	temperature int8
+	humidity    int8
 	time        time.Time
 	err         error
 }
