@@ -12,7 +12,7 @@ type measurement struct {
 	err         error
 }
 
-func handleDht(cache *measurementsCache) {
+func handleDht(cache *measurementsCache, channel chan measurement) {
 	for {
 		fmt.Println("DHT: Sleeping for 1 second...")
 		time.Sleep(time.Second * 1)
@@ -21,6 +21,7 @@ func handleDht(cache *measurementsCache) {
 		fmt.Printf("DHT: Temperature: %d, Humidity: %d, Time: %s\n", m.temperature, m.humidity, m.time)
 
 		cache.addFront(m)
+		channel <- m
 	}
 }
 
