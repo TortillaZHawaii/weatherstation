@@ -23,4 +23,7 @@ func handleButton(mCache *measurementsCache) {
 	}
 	fmt.Println("BUT: Initialising... Done")
 	defer sw1Line.Close()
+
+	// block forever
+	<-make(chan bool)
 }
