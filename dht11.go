@@ -32,7 +32,7 @@ func handleDht(cache *measurementsCache, channel chan measurement) {
 func readFromDht() measurement {
 	fmt.Println("DHT: Reading from Dht...")
 
-	c, err := gpiod.NewChip("gpiodchip0")
+	c, err := gpiod.NewChip("gpiochip0")
 	if err != nil {
 		fmt.Println("DHT: Error requesting chip", err)
 		return measurement{err: err}
