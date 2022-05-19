@@ -48,6 +48,9 @@ func readFromDht() measurement {
 	}
 
 	blockChan := make(chan bool)
+	i := 0
+	start := time.Duration(0)
+	bits := make([]byte, 50)
 	go failAfterTime(blockChan, time.Second*2)
 
 	// start signal
@@ -56,13 +59,7 @@ func readFromDht() measurement {
 	dht.SetValue(1)
 	dht.Close()
 
-	i := 0
-	start := time.Duration(0)
-
 	// wait for response
-
-	bits := make([]byte, 50)
-
 	dht, err = c.RequestLine( 4,
 		gpiod.WithBothEdges,
 		gpiod.WithEventHandler(func(le gpiod.LineEvent) {
