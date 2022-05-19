@@ -37,6 +37,7 @@ func readFromDht() measurement {
 		fmt.Println("DHT: Error requesting chip", err)
 		return measurement{err: err}
 	}
+	defer c.Close()
 
 	dht, err := c.RequestLine(4,
 		gpiod.AsOutput(1))
