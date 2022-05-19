@@ -75,7 +75,7 @@ func readFromDht() measurement {
 				} else if diff < time.Nanosecond*15 { // error
 				}
 
-				fmt.Println("DHT: i:", i, "Diff:", time)
+				fmt.Println("DHT: i:", i, "Diff:", diff)
 
 				allSignalsReceived := i == 39
 				if allSignalsReceived {
