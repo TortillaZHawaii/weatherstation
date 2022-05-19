@@ -66,13 +66,13 @@ func readFromDht() measurement {
 				diff := end - start
 				i++
 
-				if diff > time.Nanosecond*75 { // 80 ns start streaming
+				if diff > time.Microsecond*80 { // 80 mikros start streaming
 					i = -1
-				} else if diff > time.Nanosecond*64 { // 70 ns high
+				} else if diff > time.Microsecond*64 { // 70 mikros high
 					bits[i] = '1'
-				} else if diff < time.Nanosecond*30 { // 24 ns low
+				} else if diff < time.Microsecond*30 { // 24 mikros low
 					bits[i] = '0'
-				} else if diff < time.Nanosecond*15 { // error
+				} else if diff < time.Microsecond*15 { // error
 				}
 
 				fmt.Println("DHT: i:", i, "Diff:", diff)
