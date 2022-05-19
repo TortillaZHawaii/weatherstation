@@ -32,7 +32,13 @@ func handleDht(cache *measurementsCache, channel chan measurement) {
 func readFromDht() measurement {
 	fmt.Println("DHT: Reading from Dht...")
 
-	dht, err := gpiod.RequestLine("gpiochip0", 4,
+	c, err := gpiod.NewChip("gpiodchip0")
+	if err != nil {
+		fmt.Println("DHT: Error requesting chip", err)
+		return measurement{err: err}
+	}
+
+	dht, err := c.RequestLine(4,
 		gpiod.AsOutput(1))
 
 	if err != nil {
@@ -56,7 +62,7 @@ func readFromDht() measurement {
 
 	bits := make([]byte, 50)
 
-	dht, err = gpiod.RequestLine("gpiochip0", 4,
+	dht, err = c.RequestLine( 4,
 		gpiod.WithBothEdges,
 		gpiod.WithEventHandler(func(le gpiod.LineEvent) {
 			if le.Type == gpiod.LineEventRisingEdge {
