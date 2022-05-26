@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"time"
-
-	"github.com/warthog618/gpiod"
 )
 
 type measurement struct {
@@ -32,76 +31,35 @@ func handleDht(cache *measurementsCache, channel chan measurement) {
 func readFromDht() measurement {
 	fmt.Println("DHT: Reading from Dht...")
 
-	c, err := gpiod.NewChip("gpiochip0")
+	tempFile, err := os.ReadFile("/sys/bus/iio/devices/iio:device0/in_temp_input")
 	if err != nil {
-		fmt.Println("DHT: Error requesting chip", err)
-		return measurement{err: err}
-	}
-	defer c.Close()
-
-	dht, err := c.RequestLine(4,
-		gpiod.AsOutput(1))
-
-	if err != nil {
-		fmt.Println("DHT: Error requesting line:", err)
 		return measurement{err: err}
 	}
 
-	blockChan := make(chan bool)
-	i := 0
-	start := time.Duration(0)
-	bits := make([]byte, 50)
-	go failAfterTime(blockChan, time.Second*2)
+	fmt.Println("DHT: Read temp", string(tempFile))
+	temperatureI32, err := strconv.Atoi(string(tempFile))
 
-	// start signal
-	dht.SetValue(0)
-	time.Sleep(time.Millisecond * 18)
-	dht.SetValue(1)
-	dht.Close()
-
-	// wait for response
-	dht, err = c.RequestLine( 4,
-		gpiod.WithBothEdges,
-		gpiod.WithEventHandler(func(le gpiod.LineEvent) {
-			if le.Type == gpiod.LineEventRisingEdge {
-				start = le.Timestamp
-			} else if le.Type == gpiod.LineEventFallingEdge {
-				end := le.Timestamp
-				diff := end - start
-				i++
-
-				if diff > time.Microsecond*80 { // 80 mikros start streaming
-					i = -1
-				} else if diff > time.Microsecond*64 { // 70 mikros high
-					bits[i] = '1'
-				} else if diff < time.Microsecond*30 { // 24 mikros low
-					bits[i] = '0'
-				} else if diff < time.Microsecond*15 { // error
-				}
-
-				fmt.Println("DHT: i:", i, "Diff:", diff)
-
-				allSignalsReceived := i == 39
-				if allSignalsReceived {
-					blockChan <- true
-				}
-			}
-		}))
 	if err != nil {
-		fmt.Println("DHT: Error requesting line:", err)
 		return measurement{err: err}
 	}
-	defer dht.Close()
 
-	// block
-	isSuccessful := <-blockChan
+	humFile, err := os.ReadFile("/sys/bus/iio/devices/iio:device0/in_humidityrelative_input")
+	if err != nil {
+		return measurement{err: err}
+	}
 
-	if isSuccessful {
-		fmt.Println("DHT: Reading from Dht... Done")
-		return retrieveMeasurementFromBits(bits)
-	} else {
-		fmt.Println("DHT: Reading from Dht... Failed")
-		return measurement{err: fmt.Errorf("failed to read from DHT, wrong timing")}
+	fmt.Println("DHT: Read humidity", string(humFile))
+	humI32, err := strconv.Atoi(string(humFile))
+
+	if err != nil {
+		return measurement{err: err}
+	}
+
+	return measurement{
+		temperature: int8(temperatureI32 / 1000),
+		humidity:    int8(humI32 / 1000),
+		time:        time.Now(),
+		err:         nil,
 	}
 }
 
