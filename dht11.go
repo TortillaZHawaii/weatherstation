@@ -37,7 +37,9 @@ func readFromDht() measurement {
 	}
 
 	fmt.Println("DHT: Read temp", string(tempFile))
-	temperatureI32, err := strconv.Atoi(string(tempFile))
+	tempStr := string(tempFile)
+	tempStr = tempStr[:len(tempStr)-1]
+	temperatureI32, err := strconv.Atoi(tempStr)
 
 	if err != nil {
 		return measurement{err: err}
@@ -49,7 +51,9 @@ func readFromDht() measurement {
 	}
 
 	fmt.Println("DHT: Read humidity", string(humFile))
-	humI32, err := strconv.Atoi(string(humFile))
+	humStr := string(humFile)
+	humStr = humStr[:len(humStr)-1]
+	humI32, err := strconv.Atoi(humStr)
 
 	if err != nil {
 		return measurement{err: err}
