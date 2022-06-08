@@ -30,7 +30,6 @@ func ledInit(line int, name string) *led {
 
 func (led *led) close() {
 	fmt.Println("LED: Closing led", led.name)
-	led.line.Reconfigure(gpiod.AsInput)
 	led.line.Close()
 }
 
